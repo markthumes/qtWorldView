@@ -11,6 +11,7 @@
 #include <QColor>
 #include <QtUiPlugin/QDesignerExportWidget>
 #include <QOpenGLWidget>
+#include "cubesphere.h"
 
 class QDESIGNER_WIDGET_EXPORT WorldWidget : public QOpenGLWidget {
 
@@ -31,6 +32,9 @@ public:
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	}
 
+	void addSphere(){
+	}
+
 signals:
 
 protected:
@@ -38,6 +42,8 @@ protected:
 	
 	int m_width;
 	int m_height;
+
+	QList<CubeSphere> spheres;
 };
 
 #endif
