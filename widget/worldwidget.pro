@@ -4,7 +4,10 @@ CONFIG      += plugin
 TEMPLATE     = lib
 LIBS        += -lGL -lGLEW -lassimp
 
-INCLUDEPATH += htoolkit/file htoolkit/conversions stb
+QMAKE_CXXFLAGS += -ggdb -O0
+QMAKE_CXXFLAGS_RELEASE -= -O2
+
+INCLUDEPATH += 
 
 TARGET = $$qtLibraryTarget($$TARGET)
 
@@ -13,19 +16,12 @@ INSTALLS += target
 
 HEADERS     = worldwidget.h \
               worldplugin.h \
+              sphere.h \
               mesh.h \
-              shader.h \
-              cubesphere.h \
-              texture.h \
-              terrainface.h \
-              htoolkit/file/file.h \
-              htoolkit/conversions/conversions.h 
+              conversions.h
+
 SOURCES     = worldwidget.cpp \
               worldplugin.cpp \
+              sphere.cpp \
               mesh.cpp \
-              shader.cpp \
-              cubesphere.cpp \
-              texture.cpp \
-              terrainface.cpp \
-              htoolkit/file/file.cpp \
-              htoolkit/conversions/conversions.cpp 
+              conversions.cpp

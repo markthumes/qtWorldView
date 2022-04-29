@@ -1,36 +1,44 @@
-#ifndef __mesh_h__
-#define __mesh_h__
+#ifndef __MESH_H__
+#define __MESH_H__
 
-#include <vector>
-#include "shader.h"
-#include "texture.h"
+#include <QOpenGLFunctions>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLBuffer>
+#include <QVector2D>
+#include <QVector3D>
 
 typedef struct{
-	glm::vec3 position;
-	glm::vec3 normal;
-	glm::vec2 texCoords;
-	glm::vec3 color;
+	QVector3D position;
+	QVector3D normal;
+	QVector2D texCoord;
+	QVector3D color;
 }Vertex;
 
-
-class Mesh{
+class Mesh : protected QOpenGLFunctions
+{
 public:
 	Mesh();
 	Mesh( const Mesh& m );
-	std::vector<Vertex>       vertices;
-	std::vector<unsigned int> indices;
-	std::vector<Texture>      textures;
+	virtual ~Mesh();
 
-	Mesh( std::vector<Vertex> vertices,
-			std::vector<unsigned int> indices,
-			std::vector<Texture> textures );
-	void draw(Shader *s, bool wireframe = false );
-	void loadAllVertices();
-	void setupMesh( size_t maxBufferSize, size_t maxIndices);
-	void setupMesh( ); //normal mode
+	void generate();
 
-	unsigned int VAO, VBO, EBO;
+	void draw(QOpenGLShaderProgram *program);
+	void init();
 
+	void setWireFrame(bool state = true ){m_wireFrame = state;}
+	bool isWireFrame(){ return m_wireFrame; }
+
+protected:
+	QVector<Vertex> vertices;
+	QVector<GLushort> indices;
+
+private:
+	bool m_wireFrame;
+	void initCubeGeometry();
+
+	QOpenGLBuffer arrayBuf;
+	QOpenGLBuffer indexBuf;
 };
 
-#endif
+#endif // __MESH_H__
