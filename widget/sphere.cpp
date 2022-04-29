@@ -33,7 +33,7 @@ void Sphere::generate(){
 				sqrt( a*a*cos2(phi)+b*b*sin2(phi) );
 			float theta = 0 + 2 * PI * j / m_sectors;
 
-			struct VertexData current;
+			Vertex current;
 			current.position[0] = N * cosf( phi ) * cosf( theta );
 			current.position[1] = N * cosf( phi ) * sinf( theta );
 			current.position[2] = ((b*b)/(a*a)) * N * sinf( phi );

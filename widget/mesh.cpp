@@ -27,7 +27,7 @@ void Mesh::draw(QOpenGLShaderProgram *program)
 	int ofst = 0;
 	int loc  = 0;
 
-	len = program->attributeLocation("a_position");
+	loc = program->attributeLocation("a_position");
 	program->enableAttributeArray(loc);
 	program->setAttributeBuffer(loc, GL_FLOAT, ofst, 3, sizeof(Vertex));
 
