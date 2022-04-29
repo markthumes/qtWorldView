@@ -31,8 +31,8 @@ void WorldWidget::timerEvent(QTimerEvent *)
 }
 
 void WorldWidget::initShaders(){
-	if (!m_shader.addShaderFromSourceFile(QOpenGLShader::Vertex, "/home/humes/src/world_viewer/demo/vshader.glsl")) close();
-	if (!m_shader.addShaderFromSourceFile(QOpenGLShader::Fragment, "/home/humes/src/world_viewer/demo/fshader.glsl")) close();
+	if (!m_shader.addShaderFromSourceFile(QOpenGLShader::Vertex, "/home/humes/src/qtWorldView/demo/vshader.glsl")) close();
+	if (!m_shader.addShaderFromSourceFile(QOpenGLShader::Fragment, "/home/humes/src/qtWorldView/demo/fshader.glsl")) close();
 	if (!m_shader.link()) close();
 	if (!m_shader.bind()) close();
 }
@@ -74,7 +74,7 @@ void WorldWidget::paintGL(){
 
 void WorldWidget::initTextures()
 {
-	texture = new QOpenGLTexture(QImage("/home/humes/src/world_viewer/demo/earth.jpg"));
+	texture = new QOpenGLTexture(QImage("/home/humes/src/qtWorldView/demo/earth.jpg"));
 	texture->setMinificationFilter(QOpenGLTexture::Nearest);
 	texture->setMagnificationFilter(QOpenGLTexture::Linear);
 	texture->setWrapMode(QOpenGLTexture::Repeat);
