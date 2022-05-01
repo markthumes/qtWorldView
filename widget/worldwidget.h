@@ -2,6 +2,7 @@
 #define __H_WORLD_H__
 
 #include "sphere.h"
+#include "camera.h"
 
 #include <QtUiPlugin/QDesignerExportWidget>
 
@@ -24,9 +25,11 @@ class QDESIGNER_WIDGET_EXPORT WorldWidget : public QOpenGLWidget, QOpenGLFunctio
 
 public:
 	WorldWidget(QWidget *parent = 0);
-	    void mousePressEvent(QMouseEvent *e) override;
-    void mouseReleaseEvent(QMouseEvent *e) override;
-    void timerEvent(QTimerEvent *e) override;
+
+	void mousePressEvent(QMouseEvent *e) override;
+	void mouseReleaseEvent(QMouseEvent *e) override;
+	void timerEvent(QTimerEvent *e) override;
+	void wheelEvent(QWheelEvent *event) override;
 
 	void resizeGL(int w, int h) override;
 	void initializeGL() override;
@@ -38,9 +41,10 @@ public:
 	QColor background() const{ return m_background; }
 	void setBackground( QColor c ){
 		m_background = c;
-	//	glClearColor( c.redF(), c.greenF(), c.blueF(), c.alphaF() );
-	//	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		glClearColor( c.redF(), c.greenF(), c.blueF(), c.alphaF() );
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	}
+
 
 signals:
 
@@ -53,7 +57,7 @@ protected:
 	
 	QOpenGLTexture *texture = nullptr;
 
-	QMatrix4x4 projection;
+	QMatrix4x4 projMat;
 
 	QVector2D mousePressPosition;
 	QVector3D rotationAxis;
@@ -62,6 +66,8 @@ protected:
 
 	int m_width;
 	int m_height;
+
+	Camera camera;
 };
 
 #endif

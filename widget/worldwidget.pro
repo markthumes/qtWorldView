@@ -18,10 +18,12 @@ HEADERS     = worldwidget.h \
               worldplugin.h \
               sphere.h \
               mesh.h \
+              camera.h \
               conversions.h
 
 SOURCES     = worldwidget.cpp \
               worldplugin.cpp \
               sphere.cpp \
               mesh.cpp \
+              camera.cpp \
               conversions.cpp
