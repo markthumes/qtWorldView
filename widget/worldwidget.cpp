@@ -38,20 +38,33 @@ void WorldWidget::mouseReleaseEvent(QMouseEvent *e){
 }
 void WorldWidget::timerEvent(QTimerEvent *)
 {
+	alpha += 1.0;
 	angularSpeed *= 0.99;
 	if (angularSpeed < 0.01) {
 		angularSpeed = 0.0;
 	} else {
 		rotation = QQuaternion::fromAxisAndAngle(rotationAxis, angularSpeed) * rotation;
-		update();
+//		update();
 	}
+	update();
 }
 
 void WorldWidget::initShaders(){
-	if (!m_shader.addShaderFromSourceFile(QOpenGLShader::Vertex, "/home/humes/src/qtWorldView/demo/vshader.glsl")) close();
-	if (!m_shader.addShaderFromSourceFile(QOpenGLShader::Fragment, "/home/humes/src/qtWorldView/demo/fshader.glsl")) close();
-	if (!m_shader.link()) close();
-	if (!m_shader.bind()) close();
+	if (!m_shader[0].addShaderFromSourceFile(QOpenGLShader::Vertex, "/home/humes/src/qtWorldView/demo/vshader.glsl")) close();
+	if (!m_shader[0].addShaderFromSourceFile(QOpenGLShader::Fragment, "/home/humes/src/qtWorldView/demo/fshader.glsl")) close();
+	if (!m_shader[0].link()) close();
+	if (!m_shader[0].bind()) close();
+
+	m_shader[0].release();
+
+#if 1
+	if (!m_shader[1].addShaderFromSourceFile(QOpenGLShader::Vertex, "/home/humes/src/qtWorldView/demo/vshader.glsl")) close();
+	if (!m_shader[1].addShaderFromSourceFile(QOpenGLShader::Fragment, "/home/humes/src/qtWorldView/demo/flight.glsl")) close();
+	if (!m_shader[1].link()) close();
+	if (!m_shader[1].bind()) close();
+
+	m_shader[1].release();
+#endif
 }
 void WorldWidget::initializeGL(){
 	initializeOpenGLFunctions();
@@ -68,7 +81,37 @@ void WorldWidget::initializeGL(){
 	glEnable(GL_CULL_FACE);
 
 	sphere = new Sphere(20,20,1);
-	//sphere->setWireFrame();
+	light  = new Sphere(20,20,0.5);
+	sphere->setWireFrame();
+
+	pLights.push_back(
+		PointLight(
+			QVector3D(  1.0, 0.0, 0.0 ),
+			QVector3D(  0.2, 0.2, 0.2 ),
+			QVector3D(  0.9, 0.9, 0.9 ),
+			QVector3D(  1.0, 1.0, 1.0 ),
+			1.0, 0.0014, 0.000007
+		)
+	);
+
+	dLights.push_back(
+		DirLight(
+			QVector3D( 10.0, 0.0, 0.0 ),
+			QVector3D(  0.2, 0.2, 0.2 ),
+			QVector3D(  0.9, 0.9, 0.9 ),
+			QVector3D(  1.0, 1.0, 1.0 )
+		)
+	);
+	if (!m_shader[0].bind()) close();
+	m_shader[0].setUniformValue("material.shininess", 32.0f);
+	m_shader[0].setUniformValue("dirLightCount", (int)dLights.size());
+	m_shader[0].setUniformValue("pointLightCount", (int)pLights.size());
+	for( unsigned int i = 0; i < dLights.size(); i++ ){
+                dLights[i].setProperties(&m_shader[0],i);
+	}
+	for( unsigned int i = 0; i < pLights.size(); i++ ){
+                pLights[i].setProperties(&m_shader[0],i);
+	}
 
 	m_timer.start(12, this);
 }
@@ -101,12 +144,24 @@ void WorldWidget::paintGL(){
 		fprintf(stdout, "\n");
 	}
 
-	m_shader.setUniformValue("model", modelMat);
-	m_shader.setUniformValue("view", camera.getViewMat());
-	m_shader.setUniformValue("projection", projMat);
+	if (!m_shader[0].bind()) close();
+	m_shader[0].setUniformValue("viewPos", camera.position());
+	m_shader[0].setUniformValue("model", modelMat);
+	m_shader[0].setUniformValue("view", camera.getViewMat());
+	m_shader[0].setUniformValue("projection", projMat);
+	m_shader[0].setUniformValue("texture", 0);
+	sphere->draw(&m_shader[0]);
 
-	m_shader.setUniformValue("texture", 0);
-	sphere->draw(&m_shader);
+	QMatrix4x4 lightMat;
+	if (!m_shader[1].bind()) close();
+	//lightMat.translate(pLights[0].position);
+	lightMat.translate(0.0, 0.0, -5.0);
+	lightMat.rotate(alpha, QVector3D(0.0, 1.0, 0.0));
+	lightMat.translate(2.0, 0.0, 0.0);
+	m_shader[1].setUniformValue("model", lightMat);
+	m_shader[1].setUniformValue("view", camera.getViewMat());
+	m_shader[1].setUniformValue("projection", projMat);
+	light->draw(&m_shader[1]);
 }
 
 void WorldWidget::initTextures()

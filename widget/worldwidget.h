@@ -3,6 +3,7 @@
 
 #include "sphere.h"
 #include "camera.h"
+#include "light.h"
 
 #include <QtUiPlugin/QDesignerExportWidget>
 
@@ -52,8 +53,9 @@ protected:
 	QColor m_background;
 
 	QBasicTimer m_timer;
-	QOpenGLShaderProgram m_shader;
+	QOpenGLShaderProgram m_shader[2];
 	Sphere *sphere = nullptr;
+	Sphere *light = nullptr;
 	
 	QOpenGLTexture *texture = nullptr;
 
@@ -67,7 +69,12 @@ protected:
 	int m_width;
 	int m_height;
 
+	float alpha;
+
 	Camera camera;
+
+	QVector<DirLight>   dLights;
+	QVector<PointLight> pLights;
 };
 
 #endif

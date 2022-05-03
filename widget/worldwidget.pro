@@ -19,6 +19,7 @@ HEADERS     = worldwidget.h \
               sphere.h \
               mesh.h \
               camera.h \
+              light.h \
               conversions.h
 
 SOURCES     = worldwidget.cpp \
@@ -26,4 +27,5 @@ SOURCES     = worldwidget.cpp \
               sphere.cpp \
               mesh.cpp \
               camera.cpp \
+              light.cpp \
               conversions.cpp
