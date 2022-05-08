@@ -18,6 +18,7 @@
 #include <QQuaternion>
 #include <QVector2D>
 #include <QBasicTimer>
+#include <QElapsedTimer>
 
 class QDESIGNER_WIDGET_EXPORT WorldWidget : public QOpenGLWidget, QOpenGLFunctions {
 
@@ -26,11 +27,15 @@ class QDESIGNER_WIDGET_EXPORT WorldWidget : public QOpenGLWidget, QOpenGLFunctio
 
 public:
 	WorldWidget(QWidget *parent = 0);
+	~WorldWidget();
 
 	void mousePressEvent(QMouseEvent *e) override;
 	void mouseReleaseEvent(QMouseEvent *e) override;
+	void mouseMoveEvent(QMouseEvent *event) override;
 	void timerEvent(QTimerEvent *e) override;
-	void wheelEvent(QWheelEvent *event) override;
+	void wheelEvent(QWheelEvent *e) override;
+	void keyPressEvent( QKeyEvent *event) override;
+	void keyReleaseEvent( QKeyEvent *event ) override;
 
 	void resizeGL(int w, int h) override;
 	void initializeGL() override;
@@ -46,6 +51,7 @@ public:
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	}
 
+	int addLight(Light *light);
 
 signals:
 
@@ -53,9 +59,8 @@ protected:
 	QColor m_background;
 
 	QBasicTimer m_timer;
-	QOpenGLShaderProgram m_shader[2];
+	QElapsedTimer m_elapsed;
 	Sphere *sphere = nullptr;
-	Sphere *light = nullptr;
 	
 	QOpenGLTexture *texture = nullptr;
 
@@ -70,11 +75,19 @@ protected:
 	int m_height;
 
 	float alpha;
+	float dt;
 
 	Camera camera;
+	bool m_drag;
+	bool m_firstMouse;
+	float lastX, lastY;
 
-	QVector<DirLight>   dLights;
-	QVector<PointLight> pLights;
+	bool rotateMode;
+
+	QVector<Light*> lights;
+	QVector<QOpenGLShaderProgram*> shaders;
+
+	bool m_spaceLock;
 };
 
 #endif

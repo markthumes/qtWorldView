@@ -4,7 +4,7 @@ PointLight::PointLight(
 		QVector3D _position,
 		QVector3D _ambient, QVector3D _diffuse, QVector3D _specular,
 		float _constant, float _linear, float _quadratic
-		){
+		):Light(){
 	position  = _position;
 	ambient   = _ambient;
 	diffuse   = _diffuse;
@@ -12,33 +12,26 @@ PointLight::PointLight(
 	constant  = _constant;
 	linear    = _linear;
 	quadratic = _quadratic;
+	type = Point;
+	name = "pointLight";
 }
-/*
-PointLight::PointLight( const PointLight &oldLight){
-	position  = oldLight.position;
-	ambient   = oldLight.ambient;
-	diffuse   = oldLight.diffuse;
-	specular  = oldLight.specular;
-	constant  = oldLight.constant;
-	linear    = oldLight.linear;
-	quadratic = oldLight.quadratic;
-}
-*/
-void PointLight::setProperties(QOpenGLShaderProgram *s, int i){
+void PointLight::setProperties(QOpenGLShaderProgram *s){
 	char temp[100];
-	sprintf(temp,"%s[%d].position",name,i);
+	sprintf(temp,"pointLight[%d].enable",index);
+	s->setUniformValue( temp, m_enabled );
+	sprintf(temp,"pointLight[%d].position",index);
 	s->setUniformValue( temp, position );
-	sprintf(temp,"%s[%d].ambient",name,i);
+	sprintf(temp,"pointLight[%d].ambient",index);
 	s->setUniformValue( temp, ambient );
-	sprintf(temp,"%s[%d].diffuse",name,i);
+	sprintf(temp,"pointLight[%d].diffuse",index);
 	s->setUniformValue( temp, diffuse );
-	sprintf(temp,"%s[%d].specular",name,i);
+	sprintf(temp,"pointLight[%d].specular",index);
 	s->setUniformValue( temp, specular );
-	sprintf(temp,"%s[%d].constant",name,i);
+	sprintf(temp,"pointLight[%d].constant",index);
 	s->setUniformValue( temp, constant );
-	sprintf(temp,"%s[%d].linear",name,i);
+	sprintf(temp,"pointLight[%d].linear",index);
 	s->setUniformValue( temp, linear );
-	sprintf(temp,"%s[%d].quadratic",name,i);
+	sprintf(temp,"pointLight[%d].quadratic",index);
 	s->setUniformValue( temp, quadratic );
 }
 SpotLight::SpotLight(
@@ -46,7 +39,7 @@ SpotLight::SpotLight(
 		QVector3D _ambient, QVector3D _diffuse, QVector3D _specular,
 		float _constant, float _linear, float _quadratic,
 		float _cutOff, float _outerCutOff
-		){
+		):Light(){
 	position    = _position;
 	direction   = _direction;
 	ambient     = _ambient;
@@ -57,68 +50,57 @@ SpotLight::SpotLight(
 	quadratic   = _quadratic;
 	cutOff      = _cutOff;
 	outerCutOff = _outerCutOff;
+	type = Spot;
+	name = "spotLight";
 }
-SpotLight::SpotLight( const SpotLight &oldLight){
-	position    = oldLight.position;
-	direction   = oldLight.direction;
-	ambient     = oldLight.ambient;
-	diffuse     = oldLight.diffuse;
-	specular    = oldLight.specular;
-	constant    = oldLight.constant;
-	linear      = oldLight.linear;
-	quadratic   = oldLight.quadratic;
-	cutOff      = oldLight.cutOff;
-	outerCutOff = oldLight.outerCutOff;
-}
-void SpotLight::setProperties(QOpenGLShaderProgram *s, int i){
+void SpotLight::setProperties(QOpenGLShaderProgram *s){
 	char temp[100];
-	sprintf(temp,"%s[%d].direction",name,i);
+	sprintf(temp,"spotLight[%d].enable",index);
+	s->setUniformValue( temp, m_enabled );
+	sprintf(temp,"spotLight[%d].direction",index);
 	s->setUniformValue( temp, direction );
-	sprintf(temp,"%s[%d].position",name,i);
+	sprintf(temp,"spotLight[%d].position",index);
 	s->setUniformValue( temp, position );
-	sprintf(temp,"%s[%d].ambient",name,i);
+	sprintf(temp,"spotLight[%d].ambient",index);
 	s->setUniformValue( temp, ambient );
-	sprintf(temp,"%s[%d].diffuse",name,i);
+	sprintf(temp,"spotLight[%d].diffuse",index);
 	s->setUniformValue( temp, diffuse );
-	sprintf(temp,"%s[%d].specular",name,i);
+	sprintf(temp,"spotLight[%d].specular",index);
 	s->setUniformValue( temp, specular );
-	sprintf(temp,"%s[%d].constant",name,i);
+	sprintf(temp,"spotLight[%d].constant",index);
 	s->setUniformValue( temp, constant );
-	sprintf(temp,"%s[%d].linear",name,i);
+	sprintf(temp,"spotLight[%d].linear",index);
 	s->setUniformValue( temp, linear );
-	sprintf(temp,"%s[%d].quadratic",name,i);
+	sprintf(temp,"spotLight[%d].quadratic",index);
 	s->setUniformValue( temp, quadratic );
-	sprintf(temp,"%s[%d].cutOff",name,i);
+	sprintf(temp,"spotLight[%d].cutOff",index);
 	s->setUniformValue( temp, cutOff );
-	sprintf(temp,"%s[%d].outerCutOff",name,i);
+	sprintf(temp,"spotLight[%d].outerCutOff",index);
 	s->setUniformValue( temp, outerCutOff );
 }
 DirLight::DirLight(
 		QVector3D _direction,
 		QVector3D _ambient, QVector3D _diffuse, QVector3D _specular
-		){
+		):Light(){
 	direction   = _direction;
 	ambient     = _ambient;
 	diffuse     = _diffuse;
 	specular    = _specular;
+	type = Dir;
+	name = "dirLight";
 }
-/*
-DirLight::DirLight( const DirLight &oldLight){
-	direction   = oldLight.direction;
-	ambient     = oldLight.ambient;
-	diffuse     = oldLight.diffuse;
-	specular    = oldLight.specular;
-}
-*/
-void DirLight::setProperties(QOpenGLShaderProgram *s, int i){
+void DirLight::setProperties(QOpenGLShaderProgram *s){
 	char temp[100];
-	sprintf(temp,"%s[%d].direction",name,i);
+	sprintf(temp,"dirLight[%d].enable",index);
+	fprintf(stdout, "%s:%s\n", temp, m_enabled ? "True" : "False");
+	s->setUniformValue( temp, m_enabled );
+	sprintf(temp,"dirLight[%d].direction",index);
 	s->setUniformValue( temp, direction );
-	sprintf(temp,"%s[%d].ambient",name,i);
+	sprintf(temp,"dirLight[%d].ambient",index);
 	s->setUniformValue( temp, ambient );
-	sprintf(temp,"%s[%d].diffuse",name,i);
+	sprintf(temp,"dirLight[%d].diffuse",index);
 	s->setUniformValue( temp, diffuse );
-	sprintf(temp,"%s[%d].specular",name,i);
+	sprintf(temp,"dirLight[%d].specular",index);
 	s->setUniformValue( temp, specular );
 }
 
